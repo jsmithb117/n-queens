@@ -106,7 +106,6 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      //create a row using only elements at colIndex
       var matrix = this._currentAttributes;
       var column = [];
       for (let i = 0; i < matrix.n; i++) {
@@ -118,16 +117,11 @@
       if (accumulator > 1) {
         return true;
       }
-      // [1, 0, 0, 0],
-      // [0, 0, 0, 0],
-      // [1, 0, 0, 0],
-      // [0, 0, 0, 0]
       return false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-
       var matrix = this._currentAttributes;
       for ( var i = 0; i < matrix.n; i++) {
         if (window.Board.prototype.hasColConflictAt.call(this, i)) {
@@ -144,23 +138,33 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
+      var matrix = this._currentAttributes;
+      var diagonal = [];
+      var isPositive = (majorDiagonalColumnIndexAtFirstRow >= 0) ? true : false;
+      var num = Math.abs(majorDiagonalColumnIndexAtFirstRow);
+      if (isPositive) {
+        for (var x = 0, y = num; y <= matrix.n - 1; x++, y++) {
+          diagonal.push(matrix[x][y]);
+        }
+      } else {
+        for (var x = num, y = 0; x <= matrix.n - 1; x++, y++) {
+          diagonal.push(matrix[x][y]);
+        }
+      }
+      var accumulator = _.reduce(diagonal, function(memo, num) {
+        return memo + num;
+      }, 0);
+      if ( accumulator > 1) { return true; }
 
-
-      //       Major Diagonals run diagonally, top-left to bottom-right
-      //       Minor Diagonals run diagonally, top-right to bottom-left
-      return false; // fixme
+      return false;
     },
 
-
-    //major top/left => bottom/right
-    //minor top/right => bottom/left
-    // [1, 0, 0, 0],
-    // [0, 0, 0, 0],
-    // [1, 0, 0, 0],
-    // [0, 0, 0, 0]
-    // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      var matrix = this._currentAttributes;
+      for ( var i = -(matrix.n - 1); i < matrix.n - 1; i++ ) {
+        if (window.Board.prototype.hasMajorDiagonalConflictAt.call(this, i)) { return true; }
+      }
+      return false;
     },
 
 
@@ -170,13 +174,34 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var matrix = this._currentAttributes;
+      var diagonal = [];
+      var num = minorDiagonalColumnIndexAtFirstRow;
+      for ( var x = 0, y = num; y >= 0; x++, y--) {
+        if ( y < matrix.n && x < matrix.n) {
+
+          diagonal.push(matrix[x][y]);
+        }
+      }
+      var accumulator = diagonal.reduce((a, c) => {
+        return a + c;
+      }, 0);
+
+      if (accumulator > 1) {
+        return true;
+      }
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      var matrix = this._currentAttributes;
+      for (let i = 0; i < ((matrix.n - 1) * 2); i++) {
+        if (window.Board.prototype.hasMinorDiagonalConflictAt.call(this, i)) {
+          return true;
+        }
+      }
       return false; // fixme
-
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/

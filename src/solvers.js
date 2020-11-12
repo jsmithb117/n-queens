@@ -24,7 +24,7 @@ window.findNRooksSolution = function(n) {
   for ( var row = 0; row < n; row++) {
     for ( var col = 0; col < n; col++) {
       matrixInBoard[row][col] = 1;
-      if (newBoard.hasAnyRowConflicts() || newBoard.hasAnyColConflicts()) {
+      if (newBoard.hasAnyRooksConflicts()) {
         matrixInBoard[row][col] = 0;
         continue;
       }
@@ -40,91 +40,99 @@ window.countNRooksSolutions = function(n) {
   var newBoard = new Board(matrix);
   var matrixInBoard = newBoard.rows();
   var solutions = 0;
+  var boards = [];
+  //function
+  var generateSolutions = function(row) {
 
-  var addNextOne = function(matrix) {
-    //base case is: matrix reduces to n
-    // var nCount = 0;
-    // for (let i = 0; i < matrix.length; i++) {
-    //   nCount += matrix[i].reduce((a, c) => a + c);
-    // }]
-    var nCount = 0;
-    for ( var row = 0; row < n; row++) {
-      for (var col = 0; col < n; col++) {
-        nCount += matrix[row][col];
-      }
-    }
-    // var nCount = matrix.reduce( (a, row) => {
-    //   return row.reduce( (a, c) => a + c );
-    // } );
-    console.log('nCount = ', nCount);
-
-    if (nCount === n) {
-      //increment solutionCount
+    if ( row === n) {
       solutions++;
     } else {
-
-      // if ()
-      //iterate rows
-      for ( var row = 0; row < n; row++) {
-        //if a row reduces to zero
-        if (matrix[row].reduce((a, c ) => a + c ) === 0 ) {
-          //iterate column
-          for ( var col = 0; col < n; col++) {
-
-            matrix[row][col] = 1;
-            //if no conflicts,
-            if ( !newBoard.hasAnyRowConflicts() && !newBoard.hasAnyColConflicts() ) {
-              //return solutions += addNextOne(matrix)
-              return solutions += addNextOne(matrix);
-            } else if (row === n && col === n ) {
-              return 0;
-            } else {
-              matrix[row][col] = 0;
-            }
-          }
-        }// else, shift the 1 one place to the right and recurse.
-        // something = 0;
-        //
-        return solutions += addNextOne(matrix);
+      for ( var col = 0; col < n; col++) {
+        matrixInBoard[row][col] = 1;
+        if (!newBoard.hasAnyRooksConflicts()) {
+          generateSolutions(row + 1);
+          matrixInBoard[row][col] = 0;
+        } else {
+          matrixInBoard[row][col] = 0;
+        }
       }
     }
-    return solutions;
+    return;
   };
-  if (n === 2) {
-    // debugger;
-  }
-  addNextOne(matrix);
   console.log('Number of solutions for ' + n + ' rooks:', solutions);
+  generateSolutions(0);
   return solutions;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+
+  var matrix = window.makeEmptyMatrix(n);
+  var newBoard = new Board(matrix);
+  var matrixInBoard = newBoard.rows();
+
+  var queens = 0;
+
+  if (n === 0) { return []; }
+  if (n === 1) { return [[1]]; }
+  if (n === 2 || n === 3) {
+    // debugger;
+    return matrixInBoard;
+  }
+  var generateSolutions = function(row) {
+    if (queens === n && !newBoard.hasAnyQueensConflicts()) {
+      return matrixInBoard;
+    } else {
+      for ( var col = 0; col < n; col++) {
+        matrixInBoard[row][col] = 1;
+        queens++;
+        if (!newBoard.hasAnyQueensConflicts()) {
+          generateSolutions(row + 1);
+          if (queens === n) {
+            return matrixInBoard;
+          }
+          matrixInBoard[row][col] = 0;
+          queens--;
+        } else {
+          matrixInBoard[row][col] = 0;
+          queens--;
+        }
+      }
+    }
+    return;
+  };
+  // console.log('Number of solutions for ' + n + ' queens:', solutions);
+  generateSolutions(0);
+  return generateSolutions(0);
+
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var matrix = window.makeEmptyMatrix(n);
+  var newBoard = new Board(matrix);
+  var matrixInBoard = newBoard.rows();
+  var solutions = 0;
+  var boards = [];
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  var generateSolutions = function(row) {
+    if ( row === n) {
+      solutions++;
+    } else {
+      for ( var col = 0; col < n; col++) {
+        matrixInBoard[row][col] = 1;
+        if (!newBoard.hasAnyQueensConflicts()) {
+          generateSolutions(row + 1);
+          matrixInBoard[row][col] = 0;
+        } else {
+          matrixInBoard[row][col] = 0;
+        }
+      }
+    }
+    return;
+  };
+  console.log('Number of solutions for ' + n + ' queens:', solutions);
+  generateSolutions(0);
+  return solutions;
 };
-
-
-
-//[ [0,0]
-//  [0,0]
-//]
-
-//[ [1,0]
-//  [0,1]
-//]
-
-//[ [0,1]
-//  [1,0]
-//]
-

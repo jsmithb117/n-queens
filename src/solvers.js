@@ -41,8 +41,12 @@ window.countNRooksSolutions = function(n) {
   var matrixInBoard = newBoard.rows();
   var solutions = 0;
   var boards = [];
+  var breaking = false;
+
   //function
   var generateSolutions = function(row) {
+    if (breaking === true) { return; }
+    if ( row < 0 ) { return; }
     if (row === n) {
       console.log ('right here -> ', JSON.stringify(matrixInBoard));
       solutions++;
@@ -51,21 +55,27 @@ window.countNRooksSolutions = function(n) {
         matrixInBoard[row][col] = 1;
         if (!newBoard.hasAnyRooksConflicts()) {
           generateSolutions(row + 1);
+          if ( breaking === true ) { break; }
+
           matrixInBoard[row][col] = 0;
         } else {
           if ( n > 1 && n % 2 === 0) {
             if (matrixInBoard[0][Math.floor(n / 2)] === 1 && matrixInBoard[1][n / 2 - 1] === 1) {
-              return solution * 2;
-            }
             // n is even
-          } else if ( n > 2 && n % 2 === 1) {
-            console.log;
-            if (matrixInBoard[0][Math.floor(n / 2)] === 1 && matrixInBoard[1][Math.floor(n / 2)] === 1) {
-              console.log('middle -> ', JSON.stringify(matrixInBoard));
-              console.log('solutions = ', solutions);
-              return solutions * 2;
+            //  console.log('middle -> ', JSON.stringify(matrixInBoard));
+            // console.log('solutions = ', solutions);
+              //solutions * 2;
+              //solutions + 8;
+              //generateSolutions(-1);
+              // return;
             }
-            // n is odd
+          } else if ( n > 2 && n % 2 === 1) {
+            if (matrixInBoard[0][Math.floor(n / 2)] === 1 && matrixInBoard[1][Math.floor(n / 2)] === 1) {
+
+              solutions *= 2;
+              breaking = true;
+              if ( breaking === true ) { break; }
+            }
           }
           matrixInBoard[row][col] = 0;
         }

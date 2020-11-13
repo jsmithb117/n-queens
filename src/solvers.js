@@ -43,8 +43,8 @@ window.countNRooksSolutions = function(n) {
   var boards = [];
   //function
   var generateSolutions = function(row) {
-
-    if ( row === n) {
+    if (row === n) {
+      console.log ('right here -> ', JSON.stringify(matrixInBoard));
       solutions++;
     } else {
       for ( var col = 0; col < n; col++) {
@@ -53,14 +53,30 @@ window.countNRooksSolutions = function(n) {
           generateSolutions(row + 1);
           matrixInBoard[row][col] = 0;
         } else {
+          if ( n > 1 && n % 2 === 0) {
+            if (matrixInBoard[0][Math.floor(n / 2)] === 1 && matrixInBoard[1][n / 2 - 1] === 1) {
+              return solution * 2;
+            }
+            // n is even
+          } else if ( n > 2 && n % 2 === 1) {
+            console.log;
+            if (matrixInBoard[0][Math.floor(n / 2)] === 1 && matrixInBoard[1][Math.floor(n / 2)] === 1) {
+              console.log('middle -> ', JSON.stringify(matrixInBoard));
+              console.log('solutions = ', solutions);
+              return solutions * 2;
+            }
+            // n is odd
+          }
           matrixInBoard[row][col] = 0;
         }
       }
     }
+    // console.log('solutions -> ', matrixInBoard);
     return;
   };
-  console.log('Number of solutions for ' + n + ' rooks:', solutions);
   generateSolutions(0);
+  //console.log('Number of solutions for ' + n + ' rooks:', solutions);
+
   return solutions;
 };
 
@@ -86,6 +102,8 @@ window.findNQueensSolution = function(n) {
     } else {
       for ( var col = 0; col < n; col++) {
         matrixInBoard[row][col] = 1;
+
+
         queens++;
         if (!newBoard.hasAnyQueensConflicts()) {
           generateSolutions(row + 1);
